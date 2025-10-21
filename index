@@ -196,8 +196,7 @@
             <div class="actions">
               <button type="button" class="btn btn-primary" id="fakeSubmit">ارسال شکایت</button>
               <button type="reset" class="btn btn-ghost small">پاک کردن فرم</button>
-              <div style="margin-right:auto" class="chip" display=none>وضعیت: <strong style="margin-right:6px">UI بدون عملکرد</strong></div>
-            </div>
+
 
             <div class="hint-text">پس از کلیک روی «ارسال شکایت» به تیم پشتیبانی اطلاع داده می‌شود .</div>
           </form>
