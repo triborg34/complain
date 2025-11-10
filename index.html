@@ -1,319 +1,603 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>فرم شکایت مشتری</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#f4f6fb;
-      --card:#ffffff;
-      --accent1:#0ea5a4;
-      --accent2:#6366f1;
-      --muted:#6b7280;
-      --danger:#ef4444;
-      --success:#10b981;
-      --radius:14px;
-      --glass: rgba(255,255,255,0.7);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;min-height:100vh;font-family:'Vazirmatn',system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
-      background: linear-gradient(180deg,#eef2ff 0%, var(--bg) 40%);
-      color:#0f172a;padding:32px;display:flex;align-items:center;justify-content:center;
-    }
-
-    .container{width:100%;max-width:1000px}
-    .header{
-      display:flex;align-items:center;justify-content:space-between;background: linear-gradient(90deg,var(--accent2),var(--accent1));
-      color:white;padding:20px;border-radius:18px;margin-bottom:18px;box-shadow:0 6px 30px rgba(99,102,241,0.18);
-    }
-    .header .title{font-weight:700;font-size:20px}
-    .header .subtitle{font-weight:400;opacity:0.9;font-size:13px}
-
-    .card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:0 8px 24px rgba(15,23,42,0.06)}
-    .grid{display:grid;grid-template-columns:1fr 380px;gap:20px}
-
-    /* responsive */
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    form{display:flex;flex-direction:column;gap:14px}
-
-    .field{display:flex;flex-direction:column;gap:8px}
-    label{font-size:13px;color:var(--muted);}
-    input[type=text],input[type=email],input[type=tel],select,textarea{
-      padding:12px 14px;border-radius:10px;border:1px solid #e6e9f2;background:#fbfdff;outline:none;font-size:14px;
-      transition:box-shadow .15s,border-color .12s
-    }
-    input:focus,select:focus,textarea:focus{box-shadow:0 6px 18px rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.42)}
-    textarea{min-height:140px;resize:vertical}
-
-    .row{display:flex;gap:12px}
-    .row .field{flex:1}
-
-    .file-drop{
-      border:2px dashed #e6e9f2;border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(180deg,#fff, #fbfdff)
-    }
-    .file-drop .hint{font-size:13px;color:var(--muted)}
-    .file-drop button{background:transparent;border:0;color:var(--accent2);font-weight:600;cursor:pointer}
-
-    .meta-card{background:linear-gradient(180deg,#ffffff,#fbfdff);padding:16px;border-radius:12px;border:1px solid #f0f4ff}
-    .meta-card h4{margin:0 0 8px 0}
-    .meta-list{display:flex;flex-direction:column;gap:8px}
-    .meta-item{display:flex;justify-content:space-between;color:var(--muted);font-size:14px}
-
-    .actions{display:flex;gap:10px;justify-content:flex-start;margin-top:6px}
-    .btn{padding:11px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
-    .btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:white;box-shadow:0 8px 24px rgba(99,102,241,0.14)}
-    .btn-ghost{background:transparent;border:1px solid #e6e9f2;color:var(--muted)}
-    .small{font-size:13px;padding:8px 12px;border-radius:8px}
-
-    .chip{display:inline-flex;align-items:center;gap:8px;background:#f8fafc;padding:8px 10px;border-radius:999px;border:1px solid #eef2ff;font-size:13px}
-
-    .required{color:var(--danger);margin-left:6px}
-
-    /* fancy header icon */
-    .logo{display:flex;align-items:center;gap:12px}
-    .logo .mark{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,0.12);box-shadow:inset 0 -6px 18px rgba(0,0,0,0.04)}
-    .logo .mark svg{width:28px;height:28px}
-
-    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
-
-    /* tiny validation styles */
-    .hint-text{font-size:12px;color:var(--muted)}
-    .invalid{border-color:var(--danger)!important;box-shadow:0 6px 18px rgba(239,68,68,0.06)!important}
-
-    .file-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-    .file-pill{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:10px;background:#fbfbfe;border:1px solid #eef2ff}
-    .file-pill span{font-size:13px;color:#374151}
-
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <div class="title">فرم آنلاین ثبت شکایت مشتری</div>
-        <div class="subtitle">برای رسیدگی سریع، لطفاً اطلاعات دقیق سفارش و شرح مشکل را وارد کنید</div>
-      </div>
-      <div class="logo">
-        <div class="mark" aria-hidden>
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L20 6v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div style="text-align:right">
-          <div style="font-weight:700">امن آفرینان آینده پژوه</div>
-          <div style="font-size:12px;opacity:0.9">پشتیبانی مشتریان</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="grid">
-        <div>
-          <form id="complaintForm" novalidate>
-            <div class="row">
-              <div class="field">
-                <label for="fullname">نام و نام خانوادگی <span class="required">*</span></label>
-                <input id="fullname" type="text" placeholder="مثال: علی رضایی" required />
-              </div>
-              <div class="field">
-                <label for="phone">ایمیل یا شماره تماس <span class="required">*</span></label>
-                <input id="phone" type="text" placeholder="example@mail.com یا 0912xxxxxxx" required />
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="order">شماره سفارش / فاکتور</label>
-                <input id="order" type="text" placeholder="مثال: INV-2025-0001" />
-              </div>
-              <div class="field">
-                <label for="model">مدل محصول</label>
-                <input id="model" type="text" placeholder="مثال: CamX-200" />
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="purchaseDate">تاریخ خرید</label>
-                <input id="purchaseDate" type="text" placeholder="مثال: 1403/06/12" />
-              </div>
-              <div class="field">
-                <label for="type">نوع شکایت <span class="required">*</span></label>
-                <select id="type" required>
-                  <option value="">انتخاب کنید...</option>
-                  <option>کالای معیوب</option>
-                  <option>نصب/راه‌اندازی</option>
-                  <option>تاخیر در تحویل</option>
-                  <option>عدم تطابق با سفارش</option>
-                  <option>سایر موارد</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="description">شرح شکایت / مشکل <span class="required">*</span></label>
-              <textarea id="description" placeholder="مشکل را تا حد امکان واضح و کامل شرح دهید..." required></textarea>
-              <div class="hint-text">لطفا در صورت امکان شماره دوربین/کانال، زمان بروز خطا و اقدامات انجام‌شده را بنویسید.</div>
-            </div>
-
-            <div class="field">
-              <label>مدارک و تصاویر (اختیاری)</label>
-              <div class="file-drop">
-                <div class="hint">تصاویر مربوط به مشکل را بکشید و رها کنید یا از دکمه زیر انتخاب کنید</div>
-                <div>
-                  <button type="button" id="chooseFiles">انتخاب فایل</button>
-                  <input id="files" type="file" accept="image/*,video/*,application/pdf" multiple style="display:none" />
-                </div>
-              </div>
-              <div id="fileList" class="file-list" aria-hidden="true"></div>
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="priority">اولویت رسیدگی</label>
-                <select id="priority">
-                  <option>عادی</option>
-                  <option>فوری (دستگاه غیرفعال)</option>
-                  <option>خیلی فوری (اختلال سرویس)</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="contactMethod">روش تماس ترجیحی</label>
-                <select id="contactMethod">
-                  <option>تماس تلفنی</option>
-                  <option>ایمیل</option>
-                  <option>تلگرام / واتساپ</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button type="button" class="btn btn-primary" id="fakeSubmit">ارسال شکایت</button>
-              <button type="reset" class="btn btn-ghost small">پاک کردن فرم</button>
-
-
-            <div class="hint-text">پس از کلیک روی «ارسال شکایت» به تیم پشتیبانی اطلاع داده می‌شود .</div>
-          </form>
-        </div>
-
-        <aside>
-          <div class="meta-card">
-            <h4>راهنمای تکمیل فرم</h4>
-            <div class="meta-list">
-              <div class="meta-item"><span>زمان پاسخ‌دهی معمول</span><strong>1–3 روز کاری</strong></div>
-              <div class="meta-item"><span>مدارک مورد نیاز</span><strong>عکس/ویدئو از مشکل</strong></div>
-              <div class="meta-item"><span>شماره پیگیری</span><strong>پس از ثبت نمایش داده می‌شود</strong></div>
-              <div class="meta-item"><span>پشتیبانی</span><strong>support@amnafarinan.ir</strong></div>
-            </div>
-
-            <hr style="margin:12px 0;border-color:#f1f5f9" />
-
-            <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-              <div style="display:flex;flex-direction:column">
-                <small style="color:var(--muted)">شماره تماس اضطراری</small>
-                <strong>+986191011098</strong>
-              </div>
-              <div>
-                <button class="small btn-ghost" onclick="document.getElementById('complaintForm').reset()">پاک کردن</button>
-              </div>
-            </div>
-          </div>
-
-          <div style="height:16px"></div>
-
-          <div class="meta-card">
-            <h4>نکات سریع</h4>
-            <ul style="margin:8px 0 0 0;padding-left:18px;color:var(--muted)">
-              <li>شماره سفارش کمک می‌کند سریع‌تر رسیدگی شود.</li>
-              <li>اگر دوربین‌ها آنلاین نیستند، ارسال ویدئو از زمان خرابی مفید است.</li>
-              <li>اطلاعات نصب (تاریخ و تکنسین) به بررسی فنی کمک می‌کند.</li>
-            </ul>
-          </div>
-        </aside>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    // UI-only behaviors: file preview, simple validation highlights, fake submit animation
-    const choose = document.getElementById('chooseFiles');
-    const filesInput = document.getElementById('files');
-    const fileList = document.getElementById('fileList');
-    const fakeSubmit = document.getElementById('fakeSubmit');
-    const form = document.getElementById('complaintForm');
-
-    choose.addEventListener('click', ()=>filesInput.click());
-    filesInput.addEventListener('change', updateFileList);
-
-    function updateFileList(){
-      fileList.innerHTML='';
-      const files = Array.from(filesInput.files);
-      if(files.length===0){ fileList.setAttribute('aria-hidden','true'); return }
-      fileList.removeAttribute('aria-hidden');
-      files.forEach(f=>{
-        const el = document.createElement('div');
-        el.className='file-pill';
-        const name = document.createElement('span'); name.textContent = f.name;
-        const size = document.createElement('small'); size.textContent = Math.round(f.size/1024)+' KB';
-        const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
-        const remove = document.createElement('button'); remove.type='button'; remove.className='small btn-ghost'; remove.textContent='حذف';
-        remove.addEventListener('click', ()=>{
-          const dt = new DataTransfer();
-          filesInput.files = new FileList(); // simple: clear all (UI-only)
-          filesInput.value = '';
-          updateFileList();
-        });
-        right.appendChild(size); right.appendChild(remove);
-        el.appendChild(name); el.appendChild(right);
-        fileList.appendChild(el);
-      })
-    }
-
-    // basic visual validation (UI only)
-    fakeSubmit.addEventListener('click', ()=>{
-      // required fields
-      const required = [document.getElementById('fullname'), document.getElementById('phone'), document.getElementById('type'), document.getElementById('description')];
-      let ok = true;
-      required.forEach(el=>{
-        if(!el.value || el.value.trim()===''){
-          el.classList.add('invalid'); ok=false;
-        } else {
-          el.classList.remove('invalid');
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>فرم شکایت مشتری</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f4f6fb;
+            --card: #ffffff;
+            --accent1: #0ea5a4;
+            --accent2: #6366f1;
+            --muted: #6b7280;
+            --danger: #ef4444;
+            --success: #10b981;
+            --radius: 14px;
+            --glass: rgba(255, 255, 255, 0.7);
         }
-      });
 
-      if(!ok){
-        fakeSubmit.textContent='لطفاً فیلدهای ضروری را تکمیل کنید';
-        fakeSubmit.style.background='linear-gradient(90deg,var(--danger),#f97316)';
-        setTimeout(()=>{fakeSubmit.textContent='ارسال شکایت'; fakeSubmit.style.background='linear-gradient(90deg,var(--accent2),var(--accent1))'},2200);
-        return;
-      }
+        * {
+            box-sizing: border-box
+        }
 
-      // fake success
-      fakeSubmit.disabled=true; fakeSubmit.textContent='در حال ارسال...';
-      setTimeout(()=>{
-        fakeSubmit.disabled=false; fakeSubmit.textContent='ثبت شد — شماره پیگیری: 55321';
-      },1400);
-    });
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Vazirmatn', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+            background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 40%);
+            color: #0f172a;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    // small drag-drop support (UI only)
-    const drop = document.querySelector('.file-drop');
-    ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='rgba(99,102,241,0.6)'}));
-    ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='#e6e9f2'}));
-    drop.addEventListener('drop', e=>{
-      const dt = e.dataTransfer;
-      if(dt && dt.files && dt.files.length){
-        filesInput.files = dt.files; updateFileList();
-      }
-    });
+        .container {
+            width: 100%;
+            max-width: 1000px
+        }
 
-  </script>
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, var(--accent2), var(--accent1));
+            color: white;
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 30px rgba(99, 102, 241, 0.18);
+        }
+
+        .header .title {
+            font-weight: 700;
+            font-size: 20px
+        }
+
+        .header .subtitle {
+            font-weight: 400;
+            opacity: 0.9;
+            font-size: 13px
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px
+        }
+
+        /* responsive */
+        @media (max-width:900px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        input[type=text],
+        input[type=email],
+        input[type=tel],
+        select,
+        textarea {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #e6e9f2;
+            background: #fbfdff;
+            outline: none;
+            font-size: 14px;
+            transition: box-shadow .15s, border-color .12s
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.08);
+            border-color: rgba(99, 102, 241, 0.42)
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical
+        }
+
+        .row {
+            display: flex;
+            gap: 12px
+        }
+
+        .row .field {
+            flex: 1
+        }
+
+        .file-drop {
+            border: 2px dashed #e6e9f2;
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: linear-gradient(180deg, #fff, #fbfdff)
+        }
+
+        .file-drop .hint {
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        .file-drop button {
+            background: transparent;
+            border: 0;
+            color: var(--accent2);
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .meta-card {
+            background: linear-gradient(180deg, #ffffff, #fbfdff);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #f0f4ff
+        }
+
+        .meta-card h4 {
+            margin: 0 0 8px 0
+        }
+
+        .meta-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            margin-top: 6px
+        }
+
+        .btn {
+            padding: 11px 16px;
+            border-radius: 10px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 600
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--accent2), var(--accent1));
+            color: white;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.14)
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #e6e9f2;
+            color: var(--muted)
+        }
+
+        .small {
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 8px
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid #eef2ff;
+            font-size: 13px
+        }
+
+        .required {
+            color: var(--danger);
+            margin-left: 6px
+        }
+
+        /* fancy header icon */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo .mark {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 -6px 18px rgba(0, 0, 0, 0.04)
+        }
+
+        .logo .mark svg {
+            width: 28px;
+            height: 28px
+        }
+
+        footer {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center
+        }
+
+        /* tiny validation styles */
+        .hint-text {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .invalid {
+            border-color: var(--danger) !important;
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.06) !important
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px
+        }
+
+        .file-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #fbfbfe;
+            border: 1px solid #eef2ff
+        }
+
+        .file-pill span {
+            font-size: 13px;
+            color: #374151
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="title">فرم آنلاین ثبت شکایت مشتری</div>
+                <div class="subtitle">برای رسیدگی سریع، لطفاً اطلاعات دقیق سفارش و شرح مشکل را وارد کنید</div>
+            </div>
+            <div class="logo">
+                <div class="mark" aria-hidden>
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L20 6v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z" stroke="white" stroke-width="1.2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-weight:700">امن آفرینان آینده پژوه</div>
+                    <div style="font-size:12px;opacity:0.9">پشتیبانی مشتریان</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="grid">
+                <div>
+                    <form id="complaintForm" novalidate>
+                        <div class="row">
+                            <div class="field">
+                                <label for="fullname">نام و نام خانوادگی <span class="required">*</span></label>
+                                <input id="fullname" type="text" placeholder="مثال: علی رضایی" required />
+                            </div>
+                            <div class="field">
+                                <label for="phone">ایمیل یا شماره تماس <span class="required">*</span></label>
+                                <input id="phone" type="text" placeholder="example@mail.com یا 0912xxxxxxx" required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="field">
+                                <label for="order">شماره سفارش / فاکتور</label>
+                                <input id="order" type="text" placeholder="مثال: INV-2025-0001" />
+                            </div>
+                            <div class="field">
+                                <label for="model">مدل محصول</label>
+                                <input id="model" type="text" placeholder="مثال: CamX-200" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="field">
+                                <label for="purchaseDate">تاریخ خرید</label>
+                                <input id="purchaseDate" type="text" placeholder="مثال: 1403/06/12" />
+                            </div>
+                            <div class="field">
+                                <label for="type">نوع شکایت <span class="required">*</span></label>
+                                <select id="type" required>
+                                    <option value="">انتخاب کنید...</option>
+                                    <option>کالای معیوب</option>
+                                    <option>نصب/راه‌اندازی</option>
+                                    <option>تاخیر در تحویل</option>
+                                    <option>عدم تطابق با سفارش</option>
+                                    <option>سایر موارد</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="description">شرح شکایت / مشکل <span class="required">*</span></label>
+                            <textarea id="description" placeholder="مشکل را تا حد امکان واضح و کامل شرح دهید..."
+                                required></textarea>
+                            <div class="hint-text">لطفا در صورت امکان شماره دوربین/کانال، زمان بروز خطا و اقدامات
+                                انجام‌شده را بنویسید.</div>
+                        </div>
+
+                        <div class="field">
+                            <label>مدارک و تصاویر (اختیاری)</label>
+                            <div class="file-drop">
+                                <div class="hint">تصاویر مربوط به مشکل را بکشید و رها کنید یا از دکمه زیر انتخاب کنید
+                                </div>
+                                <div>
+                                    <button type="button" id="chooseFiles">انتخاب فایل</button>
+                                    <input id="files" type="file" accept="image/*,video/*,application/pdf" multiple
+                                        style="display:none" />
+                                </div>
+                            </div>
+                            <div id="fileList" class="file-list" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="field">
+                                <label for="priority">اولویت رسیدگی</label>
+                                <select id="priority">
+                                    <option>عادی</option>
+                                    <option>فوری (دستگاه غیرفعال)</option>
+                                    <option>خیلی فوری (اختلال سرویس)</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="contactMethod">روش تماس ترجیحی</label>
+                                <select id="contactMethod">
+                                    <option>تماس تلفنی</option>
+                                    <option>ایمیل</option>
+                                    <option>تلگرام / واتساپ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" class="btn btn-primary" id="fakeSubmit">ارسال شکایت</button>
+                            <button type="reset" class="btn btn-ghost small">پاک کردن فرم</button>
+                        </div>
+
+                        <div class="hint-text">پس از کلیک روی «ارسال شکایت» به تیم پشتیبانی اطلاع داده می‌شود .</div>
+                    </form>
+                </div>
+
+                <aside>
+                    <div class="meta-card">
+                        <h4>راهنمای تکمیل فرم</h4>
+                        <div class="meta-list">
+                            <div class="meta-item"><span>زمان پاسخ‌دهی معمول</span><strong>1–3 روز کاری</strong></div>
+                            <div class="meta-item"><span>مدارک مورد نیاز</span><strong>عکس/ویدئو از مشکل</strong></div>
+                            <div class="meta-item"><span>شماره پیگیری</span><strong>پس از ثبت نمایش داده می‌شود</strong>
+                            </div>
+                            <div class="meta-item"><span>پشتیبانی</span><strong>support@amnafarinan.ir</strong></div>
+                        </div>
+
+                        <hr style="margin:12px 0;border-color:#f1f5f9" />
+
+                        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+                            <div style="display:flex;flex-direction:column">
+                                <small style="color:var(--muted)">شماره تماس اضطراری</small>
+                                <strong>+986191011098</strong>
+                            </div>
+                            <div>
+                                <button class="small btn-ghost"
+                                    onclick="document.getElementById('complaintForm').reset()">پاک کردن</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="height:16px"></div>
+
+                    <div class="meta-card">
+                        <h4>نکات سریع</h4>
+                        <ul style="margin:8px 0 0 0;padding-left:18px;color:var(--muted)">
+                            <li>شماره سفارش کمک می‌کند سریع‌تر رسیدگی شود.</li>
+                            <li>اگر دوربین‌ها آنلاین نیستند، ارسال ویدئو از زمان خرابی مفید است.</li>
+                            <li>اطلاعات نصب (تاریخ و تکنسین) به بررسی فنی کمک می‌کند.</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // ⚠️ STEP 1: PASTE YOUR PUBLIC KEY HERE ⚠️
+        // Get it from: https://dashboard.emailjs.com/admin/account
+        // Look for "Public Key" section and copy it
+        // ═══════════════════════════════════════════════════════════
+        emailjs.init('OqoLtESzqf5Y6Cj7u'); // 👈 PASTE YOUR KEY HERE (inside quotes)
+
+
+        // Example: emailjs.init('abcDEF123xyz');
+
+        // UI-only behaviors: file preview, simple validation highlights
+        const choose = document.getElementById('chooseFiles');
+        const filesInput = document.getElementById('files');
+        const fileList = document.getElementById('fileList');
+        const fakeSubmit = document.getElementById('fakeSubmit');
+        const form = document.getElementById('complaintForm');
+
+        choose.addEventListener('click', () => filesInput.click());
+        filesInput.addEventListener('change', updateFileList);
+
+        function updateFileList() {
+            fileList.innerHTML = '';
+            const files = Array.from(filesInput.files);
+            if (files.length === 0) { fileList.setAttribute('aria-hidden', 'true'); return }
+            fileList.removeAttribute('aria-hidden');
+            files.forEach(f => {
+                const el = document.createElement('div');
+                el.className = 'file-pill';
+                const name = document.createElement('span'); name.textContent = f.name;
+                const size = document.createElement('small'); size.textContent = Math.round(f.size / 1024) + ' KB';
+                const right = document.createElement('div'); right.style.display = 'flex'; right.style.gap = '8px';
+                const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'small btn-ghost'; remove.textContent = 'حذف';
+                remove.addEventListener('click', () => {
+                    filesInput.files = new FileList();
+                    filesInput.value = '';
+                    updateFileList();
+                });
+                right.appendChild(size); right.appendChild(remove);
+                el.appendChild(name); el.appendChild(right);
+                fileList.appendChild(el);
+            })
+        }
+
+        // Form submission with email
+        fakeSubmit.addEventListener('click', () => {
+            // Validate required fields
+            const required = [
+                document.getElementById('fullname'),
+                document.getElementById('phone'),
+                document.getElementById('type'),
+                document.getElementById('description')
+            ];
+            let ok = true;
+            required.forEach(el => {
+                if (!el.value || el.value.trim() === '') {
+                    el.classList.add('invalid'); ok = false;
+                } else {
+                    el.classList.remove('invalid');
+                }
+            });
+
+            if (!ok) {
+                fakeSubmit.textContent = 'لطفاً فیلدهای ضروری را تکمیل کنید';
+                fakeSubmit.style.background = 'linear-gradient(90deg,var(--danger),#f97316)';
+                setTimeout(() => {
+                    fakeSubmit.textContent = 'ارسال شکایت';
+                    fakeSubmit.style.background = 'linear-gradient(90deg,var(--accent2),var(--accent1))';
+                }, 2200);
+                return;
+            }
+
+            // Prepare email data
+            fakeSubmit.disabled = true;
+            fakeSubmit.textContent = 'در حال ارسال...';
+
+            const trackingNumber = 'TCK-' + Math.floor(10000 + Math.random() * 90000);
+
+            const templateParams = {
+                name:document.getElementById('fullname').value,
+                fullname: document.getElementById('fullname').value,
+                phone: document.getElementById('phone').value,
+                order: document.getElementById('order').value || 'ذکر نشده',
+                model: document.getElementById('model').value || 'ذکر نشده',
+                purchaseDate: document.getElementById('purchaseDate').value || 'ذکر نشده',
+                type: document.getElementById('type').value,
+                description: document.getElementById('description').value,
+                priority: document.getElementById('priority').value,
+                contactMethod: document.getElementById('contactMethod').value,
+                submissionDate: new Date().toLocaleDateString('fa-IR'),
+                trackingNumber: trackingNumber
+            };
+
+            // ═══════════════════════════════════════════════════════════
+            // ⚠️ STEP 2 & 3: PASTE YOUR SERVICE ID AND TEMPLATE ID HERE ⚠️
+            // Service ID: Get from https://dashboard.emailjs.com/admin (Email Services section)
+            // Template ID: Get from https://dashboard.emailjs.com/admin/templates
+            // ═══════════════════════════════════════════════════════════
+            emailjs.send(
+                "service_dlixmps", "template_4j69awf",
+templateParams
+
+            )
+                // Example: emailjs.send('service_abc123', 'template_xyz789', templateParams)
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    fakeSubmit.textContent = '✓ ثبت شد — شماره پیگیری: ' + trackingNumber;
+                    fakeSubmit.style.background = 'linear-gradient(90deg,var(--success),#10b981)';
+
+                    // Reset form after 3 seconds
+                    setTimeout(() => {
+                        form.reset();
+                        updateFileList();
+                        fakeSubmit.disabled = false;
+                        fakeSubmit.textContent = 'ارسال شکایت';
+                        fakeSubmit.style.background = 'linear-gradient(90deg,var(--accent2),var(--accent1))';
+                    }, 3000);
+                }, function (error) {
+                    console.error('FAILED...', error);
+                    fakeSubmit.disabled = false;
+                    fakeSubmit.textContent = '❌ خطا در ارسال - دوباره تلاش کنید';
+                    fakeSubmit.style.background = 'linear-gradient(90deg,var(--danger),#f97316)';
+                    setTimeout(() => {
+                        fakeSubmit.textContent = 'ارسال شکایت';
+                        fakeSubmit.style.background = 'linear-gradient(90deg,var(--accent2),var(--accent1))';
+                    }, 3000);
+                });
+        });
+
+        // Drag-drop support
+        const drop = document.querySelector('.file-drop');
+        ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = 'rgba(99,102,241,0.6)' }));
+        ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.style.borderColor = '#e6e9f2' }));
+        drop.addEventListener('drop', e => {
+            const dt = e.dataTransfer;
+            if (dt && dt.files && dt.files.length) {
+                filesInput.files = dt.files; updateFileList();
+            }
+        });
+
+    </script>
 </body>
+
 </html>
