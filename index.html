@@ -196,7 +196,7 @@
             <div class="actions">
               <button type="button" class="btn btn-primary" id="fakeSubmit">ارسال شکایت</button>
               <button type="reset" class="btn btn-ghost small">پاک کردن فرم</button>
-
+            </div>
 
             <div class="hint-text">پس از کلیک روی «ارسال شکایت» به تیم پشتیبانی اطلاع داده می‌شود .</div>
           </form>
@@ -241,8 +241,20 @@
     </div>
   </div>
 
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  
   <script>
-    // UI-only behaviors: file preview, simple validation highlights, fake submit animation
+    // ═══════════════════════════════════════════════════════════
+    // ⚠️ STEP 1: PASTE YOUR PUBLIC KEY HERE ⚠️
+    // Get it from: https://dashboard.emailjs.com/admin/account
+    // Look for "Public Key" section and copy it
+    // ═══════════════════════════════════════════════════════════
+    emailjs.init('OqoLtESzqf5Y6Cj7u'); // 👈 PASTE YOUR KEY HERE (inside quotes)
+    
+    // Example: emailjs.init('abcDEF123xyz');
+
+    // UI-only behaviors: file preview, simple validation highlights
     const choose = document.getElementById('chooseFiles');
     const filesInput = document.getElementById('files');
     const fileList = document.getElementById('fileList');
@@ -265,8 +277,7 @@
         const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
         const remove = document.createElement('button'); remove.type='button'; remove.className='small btn-ghost'; remove.textContent='حذف';
         remove.addEventListener('click', ()=>{
-          const dt = new DataTransfer();
-          filesInput.files = new FileList(); // simple: clear all (UI-only)
+          filesInput.files = new FileList();
           filesInput.value = '';
           updateFileList();
         });
@@ -276,10 +287,15 @@
       })
     }
 
-    // basic visual validation (UI only)
+    // Form submission with email
     fakeSubmit.addEventListener('click', ()=>{
-      // required fields
-      const required = [document.getElementById('fullname'), document.getElementById('phone'), document.getElementById('type'), document.getElementById('description')];
+      // Validate required fields
+      const required = [
+        document.getElementById('fullname'), 
+        document.getElementById('phone'), 
+        document.getElementById('type'), 
+        document.getElementById('description')
+      ];
       let ok = true;
       required.forEach(el=>{
         if(!el.value || el.value.trim()===''){
@@ -292,18 +308,70 @@
       if(!ok){
         fakeSubmit.textContent='لطفاً فیلدهای ضروری را تکمیل کنید';
         fakeSubmit.style.background='linear-gradient(90deg,var(--danger),#f97316)';
-        setTimeout(()=>{fakeSubmit.textContent='ارسال شکایت'; fakeSubmit.style.background='linear-gradient(90deg,var(--accent2),var(--accent1))'},2200);
+        setTimeout(()=>{
+          fakeSubmit.textContent='ارسال شکایت'; 
+          fakeSubmit.style.background='linear-gradient(90deg,var(--accent2),var(--accent1))';
+        },2200);
         return;
       }
 
-      // fake success
-      fakeSubmit.disabled=true; fakeSubmit.textContent='در حال ارسال...';
-      setTimeout(()=>{
-        fakeSubmit.disabled=false; fakeSubmit.textContent='ثبت شد — شماره پیگیری: 55321';
-      },1400);
+      // Prepare email data
+      fakeSubmit.disabled=true; 
+      fakeSubmit.textContent='در حال ارسال...';
+      
+      const trackingNumber = 'TCK-' + Math.floor(10000 + Math.random() * 90000);
+      
+      const templateParams = {
+        fullname: document.getElementById('fullname').value,
+        phone: document.getElementById('phone').value,
+        order: document.getElementById('order').value || 'ذکر نشده',
+        model: document.getElementById('model').value || 'ذکر نشده',
+        purchaseDate: document.getElementById('purchaseDate').value || 'ذکر نشده',
+        type: document.getElementById('type').value,
+        description: document.getElementById('description').value,
+        priority: document.getElementById('priority').value,
+        contactMethod: document.getElementById('contactMethod').value,
+        submissionDate: new Date().toLocaleDateString('fa-IR'),
+        trackingNumber: trackingNumber
+      };
+
+      // ═══════════════════════════════════════════════════════════
+      // ⚠️ STEP 2 & 3: PASTE YOUR SERVICE ID AND TEMPLATE ID HERE ⚠️
+      // Service ID: Get from https://dashboard.emailjs.com/admin (Email Services section)
+      // Template ID: Get from https://dashboard.emailjs.com/admin/templates
+      // ═══════════════════════════════════════════════════════════
+      emailjs.send(
+        'service_dlixmps',    // 👈 PASTE SERVICE ID HERE (inside quotes)
+        'template_ovqz02h',   // 👈 PASTE TEMPLATE ID HERE (inside quotes)
+        templateParams
+      )
+      // Example: emailjs.send('service_abc123', 'template_xyz789', templateParams)
+        .then(function(response) {
+          console.log('SUCCESS!', response.status, response.text);
+          fakeSubmit.textContent='✓ ثبت شد — شماره پیگیری: ' + trackingNumber;
+          fakeSubmit.style.background='linear-gradient(90deg,var(--success),#10b981)';
+          
+          // Reset form after 3 seconds
+          setTimeout(()=>{
+            form.reset();
+            updateFileList();
+            fakeSubmit.disabled=false;
+            fakeSubmit.textContent='ارسال شکایت';
+            fakeSubmit.style.background='linear-gradient(90deg,var(--accent2),var(--accent1))';
+          }, 3000);
+        }, function(error) {
+          console.error('FAILED...', error);
+          fakeSubmit.disabled=false;
+          fakeSubmit.textContent='❌ خطا در ارسال - دوباره تلاش کنید';
+          fakeSubmit.style.background='linear-gradient(90deg,var(--danger),#f97316)';
+          setTimeout(()=>{
+            fakeSubmit.textContent='ارسال شکایت';
+            fakeSubmit.style.background='linear-gradient(90deg,var(--accent2),var(--accent1))';
+          }, 3000);
+        });
     });
 
-    // small drag-drop support (UI only)
+    // Drag-drop support
     const drop = document.querySelector('.file-drop');
     ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='rgba(99,102,241,0.6)'}));
     ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='#e6e9f2'}));
